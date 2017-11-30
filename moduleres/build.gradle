@@ -1,0 +1,18 @@
+apply plugin: 'com.android.library'
+
+def androidlib = rootProject.ext.android
+
+android {
+    compileSdkVersion androidlib.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion androidlib.minSdkVersion
+        targetSdkVersion androidlib.targetSdkVersion
+        versionCode androidlib.versionCode
+        versionName androidlib.versionName
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}

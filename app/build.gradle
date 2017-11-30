@@ -1,0 +1,101 @@
+apply plugin: 'com.android.application'
+
+def androidlib = rootProject.ext.android
+
+def keystorePropertiesFile = rootProject.file("local.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
+android {
+    compileSdkVersion androidlib.compileSdkVersion
+    defaultConfig {
+        applicationId "com.eeepay.superbanker"
+        minSdkVersion androidlib.minSdkVersion
+        targetSdkVersion androidlib.targetSdkVersion
+        versionCode androidlib.versionCode
+        versionName androidlib.versionName
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [ moduleName : project.getName() ]
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    signingConfigs {
+        debug {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+    flavorDimensions "default"
+    productFlavors {
+        //resConfigs 指定一种屏幕密度
+        app {
+            dimension "default"
+            applicationId "com.eeepay.superbanker"
+//            resValue "string", "app_name", "appacc"
+//            minSdkVersion 21
+//            resConfigs "xxhdpi"
+//            versionCode 1
+            manifestPlaceholders = [UMENG_APPKEY: ""]
+            signingConfig signingConfigs.debug
+        }
+
+        oem1 {
+            dimension "default"
+            applicationId "com.eeepay.superbanker.oem1"
+//            resValue "string", "app_name", "oem1"
+//            minSdkVersion 19
+//            resConfigs "xhdpi"
+//            versionCode 1
+            manifestPlaceholders = [UMENG_APPKEY: ""]
+            signingConfig signingConfigs.debug
+        }
+
+        oem2 {
+            dimension "default"
+            applicationId "com.eeepay.superbanker.oem2"
+//            resValue "string", "app_name", "oem2"
+//            minSdkVersion 19
+//            resConfigs "xhdpi"
+//            versionCode 1
+            manifestPlaceholders = [UMENG_APPKEY: ""]
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    if(isApp.toBoolean()){
+        implementation project(':modulebase')
+    }else{
+        implementation project(':appcard')
+        implementation project(':appuser')
+    }
+    compile 'com.alibaba:arouter-api:1.2.4'
+    annotationProcessor 'com.alibaba:arouter-compiler:1.1.4'
+}

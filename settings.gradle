@@ -1,0 +1,1 @@
+include ':app', ':modulebase', ':moduleres', ':appcard', ':appuser'
